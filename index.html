@@ -2,19 +2,77 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,700italic,800,800italic,600italic,600,400italic,300italic,300' rel='stylesheet' type='text/css'>
     <style>
-
         body {
-            font-size: 18pt;
+        }
+
+        h1, h2, h3, h4, h5, p, div {
+          font-family: 'Open Sans', sans-serif;
+        }
+
+        h1 {
+          text-align: center;
+        }
+
+        #current-time {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .time {
+          font-size: 24px;
         }
 
         .event {
           border: 2px solid black;
-          padding: 10px;
+          padding: 20px;
           margin-bottom: 20px;
           border-radius: 20px;
           /*background-color: #9D4828;*/
-          background-color: hsl(45, 76%, 85%);
+          background-color: hsl(45, 76%, 94%);
+        }
+
+        .years {
+          font-size: 120%;
+          font-weight: 800;
+        }
+        .months {
+          font-size: 100%;
+          font-weight: 700;
+        }
+        .days {
+          font-size: 80%;
+          font-weight: 600;
+        }
+        .hours {
+          font-size: 75%;
+          font-weight: 500;
+        }
+        .minutes {
+          font-size: 70%;
+          font-weight: 400;
+        }
+        .seconds {
+          font-size: 60%;
+          font-weight: 300;
+        }
+        .years::after {
+          content: " years";
+        }
+        .months::after {
+          content: " months";
+        }
+        .days::after {
+          content: " days";
+        }
+        .hours::after {
+          content: " hours";
+        }
+        .minutes::after {
+          content: " minutes";
+        }
+        .seconds::after {
+          content: " seconds";
         }
 
     </style>
@@ -24,13 +82,94 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="moment.min.js"></script>
     <script src="moment-timezone-with-data.min.js"></script>
-    <script src="main.js"></script>
+    <script>
+    var jsonData;
+
+    var update = function() {
+      var now = moment();
+      $('#current-time').text(now.format('MMMM Do YYYY, h:mm:ss a'));
+
+      $('#events').empty();
+      for (var i in jsonData) {
+        var event = jsonData[i];
+        var div = $('<div class="row event"/>');
+        var starts = moment(event.start_time, "YYYY-MM-DD h:mm:ss a");
+        if (event.timezone == "") {
+          event.timezone = "America/Los_Angeles";
+        }
+        starts = starts.tz(event.timezone);
+        var diff = now.diff(starts);
+        var years = now.diff(starts, 'years');
+        starts = starts.add(years, "years");
+        var months = now.diff(starts, 'months');
+        starts = starts.add(months, "months");
+        var days = now.diff(starts, 'days');
+        starts = starts.add(days, "days");
+        var hours = now.diff(starts, 'hours');
+        starts = starts.add(hours, "hours");
+        var minutes = now.diff(starts, 'minutes');
+        starts = starts.add(minutes, "minutes");
+        var seconds = now.diff(starts, 'seconds');
+
+        var diffcol = '';
+        diffcol += '<div class="container">'
+        if (years > 0) {
+          diffcol += '<div class="row"><div class="col-xs-12 time years">' + years + '</div></div>';
+        }
+        diffcol += '<div class="row"><div class="col-xs-12 time months">' + months + '</div></div>';
+        diffcol += '<div class="row"><div class="col-xs-12 time days">' + days + '</div></div>';
+        diffcol += '<div class="row"><div class="col-xs-12 time hours">' + hours + '</div></div>';
+        diffcol += '<div class="row"><div class="col-xs-12 time minutes">' + minutes + '</div></div>';
+        diffcol += '<div class="row"><div class="col-xs-12 time seconds">' + seconds + '</div></div>';
+        diffcol += '</div>'
+
+        var leftcol = '';
+
+        leftcol += '<div class="row">';
+        leftcol += '<div class="col-xs-6 description"><h3>' + event.name + '</h3></div>';
+        leftcol += '</div>';
+
+        leftcol += '<div class="row">';
+        leftcol += '<div class="col-xs-6 description"><h4>' + event.description + '</h4></div>';
+        leftcol += '</div>';
+
+        leftcol += '<div class="row">';
+        leftcol += '<div class="col-xs-6 location"><h4>' + event.location + '</h4></div>';
+        leftcol += '</div>';
+
+        leftcol += '<div class="row">';
+        leftcol += '<div class="col-xs-6 start_time"><h4>' + event.start_time + ' ' + event.timezone + '</h4></div>';
+        leftcol += '</div>';
+
+        if (event.coc) {
+          leftcol += '<div class="row">';
+          leftcol += '<div class="col-xs-6 coc"><h4><a href="' + event.coc + '">Code of conduct</a></h4></div>';
+          leftcol += '</div>';
+        }
+
+        var row = $('<div class="row" />');
+        row.append($('<div class="col-xs-6 name">' + leftcol + '</div>'));
+        row.append($('<div class="col-xs-6 time">' + diffcol + '</div>'));
+        div.append(row);
+
+        $('#events').append(div);
+      }
+      setTimeout(update, 1000);
+    }
+
+    $(document).ready(function() {
+      $.getJSON("data.json", function(data) {
+        jsonData = data;
+        update();
+      });
+    });
+    </script>
 </head>
 <body>
   <div class="container">
     <div class="row">
       <div class="col-xs-12">
-        <h1 class="">Countdown</h1>
+        <h1 class="">The Final Countdown</h1>
       </div>
     </div>
     <div class="row">

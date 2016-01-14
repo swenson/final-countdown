@@ -1,0 +1,18 @@
+[
+  {
+    "name": "OSCON",
+    "description": "O'Reilly Open Source Convention",
+    "location": "Portland, OR USA",
+    "start_time": "2015-05-18 12:00:00 AM",
+    "coc": "http://www.oreilly.com/conferences/code-of-conduct.html",
+    "timezone": ""
+  },
+  {
+    "name": "US PyCon",
+    "description": "Python programming conference",
+    "location": "Portland, OR USA",
+    "start_time": "2015-05-28 12:00:00 AM",
+    "coc": "https://us.pycon.org/2016/about/code-of-conduct/",
+    "timezone": ""
+  }
+]
